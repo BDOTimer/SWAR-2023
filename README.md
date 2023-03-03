@@ -34,6 +34,6 @@ ____
 ...
     
 ____
-
-[![_i/1.jpg](https://youtu.be/itWBCM06IkU)](https://youtu.be/itWBCM06IkU)
+    
+[![Screenshot in game 1](_i/1.jpg)](https://youtu.be/itWBCM06IkU)
 
