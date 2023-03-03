@@ -1,76 +1,32 @@
-#ifndef CONFIG_H
-#define CONFIG_H
-
+#ifndef WIN_H
+#define WIN_H
 ///----------------------------------------------------------------------------|
-/// "_config.h"
+/// "win.h"
 ///----------------------------------------------------------------------------:
+
+#ifdef    __WIN32__
+    #define WINDOWSCOLOR
+#endif // __WIN32__
+
 #include <string_view>
-#include <iostream>
-#include <vector>
-#include <list>
-#include <map>
+#include "mylib.h"
 
-namespace cfg
-{
-
-enum eTRANSPORT_MODE
-{   TRANSPORT_STRING,
-    TRANSPORT_PACKET
-};
-
-eTRANSPORT_MODE TRANSPORT_MODE = TRANSPORT_PACKET;
-
-const unsigned short  PORT =  50001     ;
-const char* ADDRESS_SERVER = "127.0.0.1";
-
-const short ATRB_DEFAULT   = 7;
-
-struct  Config
-{   Config()
-    {
-    }
-
-    void foo()
-    {
-    }
-};
-
-} /// namespace cfg
-
-inline void testclass_Config()
-{   std::cout << __FUNCTION__ << '\n';
-
-
-
-    std::cin.get();
-}
-
-#define l(v)       std::cout << #v << " = " << (v) << "\n";
-#define ll         std::cin.get();
-#define PRESSENTER std::cin.get()
-
-struct  Plot
-{   int x, y;
-
-    Plot operator+ (const Plot& p) const { return {x +  p.x ,  y +  p.y}; }
-    bool operator==(const Plot& p) const { return  x == p.x && y == p.y ; }
-    bool operator!=(const Plot& p) const { return  x != p.x || y != p.y ; }
-};
+#ifdef WINDOWSCOLOR
 
 namespace win
 {
 #include <windows.h>
 
+const short ATRB_DEFAULT = 7;
+
+using myl::Plot;
+
 void set_window_name(std::string_view name)
 {   SetConsoleTitle (name.data());
 }
 
-void  sleep  (int ms)
-{   Sleep(ms);
-}
-
-short convert(short text, short background)
-{   return   (background  << 4) | text;
+constexpr short convert(short text, short background)
+{   return                    text  |    (background << 4);
 };
 
 ///---------------------|
@@ -130,18 +86,120 @@ struct  Screen
     {   HANDLE _h = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(_h, atrb);
         std::cout << str;
-        SetConsoleTextAttribute(_h, cfg::ATRB_DEFAULT);
+        SetConsoleTextAttribute(_h, ATRB_DEFAULT);
         return "";
     }
 
-    static std::wstring color(short atrb = cfg::ATRB_DEFAULT)
+    static std::wstring color(short atrb = ATRB_DEFAULT)
     {   HANDLE _h = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(_h, atrb);
         return L"";
     }
 };
 
+struct  Color
+{       Color(short col){ Screen::color(col); }
+       ~Color(         ){ Screen::color(   ); }
+};
+
+void PAUSE_ENTER()
+{   Screen::color_str("PRESS ENTER!\n", 14);
+    std::cin.get();
+}
+
+void SetConsoleRus()
+{
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+}
+
 } /// namespace win
 
-#endif // CONFIG_H
+#else
+
+typedef short WORD;
+
+namespace win
+{
+
+const short ATRB_DEFAULT = 7;
+
+using myl::Plot;
+
+void set_window_name(std::string_view name)
+{   //SetConsoleTitle (name.data());
+}
+
+constexpr short convert(short text, short background)
+{   return                    text  |    (background << 4);
+};
+
+///---------------------|
+/// Экран.              |
+///---------------------:
+struct  Screen
+{       Screen(Plot st) : start(st)
+        {
+        }
+
+    Plot start;
+
+    void to(const Plot p, char sign, WORD color) const
+    {   /// this linux ...
+    }
+
+    void to(const Plot p, char sign) const
+    {   /// this linux ...
+    }
+
+    void setatr(short a) const
+    {   /// this linux ...
+    }
+
+    void carret_visible(bool visible = false) const
+    {   /// this linux ...
+    }
+
+    void set_cursor(const Plot p) const
+    {   /// this linux ...
+    }
+
+    void set_cursor(const Plot p, short text, short background) const
+    {   /// this linux ...
+    }
+
+    void set_cursor(const Plot p, short atrb) const
+    {   /// this linux ...
+    }
+
+    static std::string color_str(std::string_view str, short atrb)
+    {   /// this linux ...
+        std::cout << str;
+        return "";
+    }
+
+    static std::wstring color(short atrb = ATRB_DEFAULT)
+    {   /// this linux ...
+        return L"";
+    }
+};
+
+void PAUSE_ENTER()
+{   std::cout << "PRESS ENTER!\n";
+    std::cin.get();
+}
+
+struct  Color
+{       Color(short col){  }
+       ~Color(         ){  }
+};
+
+void SetConsoleRus()
+{
+}
+
+} /// namespace win
+#endif
+
+#endif // WIN_H
 

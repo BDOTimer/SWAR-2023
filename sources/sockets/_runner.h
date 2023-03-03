@@ -4,7 +4,6 @@
 /// "_runner.h"
 ///----------------------------------------------------------------------------:
 
-
 #include "_server.h"
 #include "_client.h"
 
@@ -17,18 +16,20 @@ private:
 
     void loop()
     {
-        std::wcout << L"Для запуска сервера PRESS ENTER\n"; std::cin.get();
-        std::system("start main server");
+        std::wcout << L"Для запуска сервера "; PAUSE_ENTER();
 
+        std::system("start main server");
 
         while(true)
         {
-            if(0 == cnt_id) std::wcout << L"Для запуска клиента PRESS ENTER";
-            else            std::wcout << L"...     ещё клиент  PRESS ENTER";
-
-            std::cin.get(); std::wcout << L"... запуск!\n";
-
             Account acc = generate_acc();
+
+            if(1 == cnt_id) std::wcout << L"Для запуска  клиента:\n";
+            else            std::wcout << L"Запустить ещё клиент:\n";
+
+            std::cout  << acc << '\n';
+            PAUSE_ENTER();
+
             std::system(generate_command_arg(acc).c_str());
         }
     }
@@ -37,11 +38,11 @@ private:
 
     Account generate_acc()
     {
-        Account   acc;
-                  acc.nick     = "nick-";
-                  acc.nick    +=  std::to_string(++cnt_id);
-                  acc.password = "*password*";
-        return    acc;
+        Account acc;
+                acc.nick     = "nick-";
+                acc.nick    +=  std::to_string(++cnt_id);
+                acc.password = "*password*";
+        return  acc;
     }
 
     std::string generate_command_arg(const Account& acc) const
@@ -51,9 +52,13 @@ private:
 };
 
 inline void testclass_Runner()
-{   std::system("mode 40,30");
+{   std::system("mode 41,30");
     std::cout << __FUNCTION__ << '\n';
+
+
+#ifndef SERVER_SILENT
     win::set_window_name("RUNNER - 2023");
+#endif
 
     Runner runner;
 

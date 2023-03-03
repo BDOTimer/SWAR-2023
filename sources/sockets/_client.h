@@ -1,42 +1,33 @@
-#ifndef HEADER_9AABE788BCA9A156
-#define HEADER_9AABE788BCA9A156
-
+#ifndef CLIENT_H
+#define CLIENT_H
 ///----------------------------------------------------------------------------|
 /// "_client.h"
 ///----------------------------------------------------------------------------:
-#ifndef CLIENT_H
-#define CLIENT_H
 
 #include "_mysfml.h"
+#include "_mess.h"
 
+struct  Client : protected Mess
+{       Client(Account acc) :   Mess   ("SERVER"),
+                                account(acc)
+        {
+            if(false == set_address(address_server)) return;
 
-struct  Client
-{   Client(Account acc) :  ATRBin (win::convert(11, 0)),
-                           ATRBout(win::convert(12, 0)),
-                           account(acc)
-    {
-        set_address(address_server);
+            data_out = {account, 2023, L"Привет, Мир!"};
 
-                  data_out = {account, 2023, L"Привет, Мир!"};
-        packet << data_out;
-
-        switch ( cfg::TRANSPORT_MODE )
-        {   case cfg::TRANSPORT_STRING: test_01();
-            case cfg::TRANSPORT_PACKET: test_02();
+            switch ( cfg::TRANSPORT_MODE )
+            {   case cfg::TRANSPORT_STRING: test_string();
+                case cfg::TRANSPORT_PACKET: test_packet();
+            }
         }
-    }
 
     unsigned short port = cfg::PORT;
     sf::IpAddress  address_server  ;
 
-    const short   ATRBin ;
-    const short   ATRBout;
     const Account account;
-
     Data         data_out;
-    sf::Packet     packet;
 
-    void test_01()
+    void test_string()
     {
         for(int i = 0; i < 3; ++i)
         {
@@ -50,7 +41,7 @@ struct  Client
                 return;
             std::cout << "Connect to the server "
                       << address_server
-                      << win::Screen::color_str(" GOOD\n", 10);
+                      << " GOOD\n";
 
             ///-------------------------------|
             /// Receive a message             |
@@ -61,27 +52,27 @@ struct  Client
             if (socket.receive(in, sizeof(in), received) != sf::Socket::Done)
                 return;
             std::cout << "Message received from the server: \""
-                      << win::Screen::color_str(in, ATRBin)
+                      << in
                       << "\"" << std::endl;
 
             ///-------------------------------|
             /// Send an answer to the server. |
             ///-------------------------------:
-            const char out[] = "Hi, I'm a client ";
+            const char  out[] = "Hi, I'm a client ";
             std::string Out(out);
-                        Out += account.to_string();
+                        Out  += account.to_string();
 
             if (socket.send(Out.c_str(), Out.size()) != sf::Socket::Done)
                 return;
             std::cout << "Message sent to the server: \""
-                      << win::Screen::color_str(Out, ATRBout)
+                      << Out
                       << "\"" << std::endl;
 
-            PRESSENTER;
+            PAUSE_ENTER();
         }
     }
 
-    void test_02()
+    void test_packet()
     {
         for(int i = 0; i < 3; ++i)
         {
@@ -93,32 +84,39 @@ struct  Client
 
             if (socket.connect(address_server, port) != sf::Socket::Done)
                 return;
+
             std::cout << "Connect to the server "
-                      << address_server
-                      << win::Screen::color_str(" GOOD\n", 10);
+                      << address_server;
+
+            info(" GOOD\n", 10);
 
             ///-------------------------------|
             /// Receive a message             |
             /// from the server.              |
             ///-------------------------------:
-            char in[128];
-            std::size_t received;
-            if (socket.receive(in, sizeof(in), received) != sf::Socket::Done)
+            sf::Packet packet;
+            if (socket.receive(packet) != sf::Socket::Done)
+            {   info_err(L"sf::Socket::Done is FALSE");
                 return;
-            std::cout << "Message received from the server: \""
-                      << win::Screen::color_str(in, ATRBin)
-                      << "\"" << std::endl;
+            }
+            else
+            {   Data data; packet >> data; info_in(data);
+            }
 
             ///-------------------------------|
             /// Send an answer to the server. |
             ///-------------------------------:
-            if (socket.send(packet) != sf::Socket::Done) return;
-            std::wcout << "Message sent to the server: \""
-                       << win::Screen::color(ATRBout) << data_out
-                       << win::Screen::color()
-                       << "\"" << std::endl;
+            sf::Packet      packet_out;
+                            packet_out << data_out;
+            if (socket.send(packet_out) != sf::Socket::Done)
+            {   info_err(L"sf::Socket::Done is FALSE");
+                return;
+            }
+            else info_out(data_out);
 
-            PRESSENTER;
+          //PAUSE_ENTER();
+
+            data_out.mess = input_str();
         }
     }
 
@@ -126,20 +124,23 @@ private:
     ///-------------------------------|
     /// Ask for the server address.   |
     ///-------------------------------:
-    void set_address(sf::IpAddress& addr) const
+    bool set_address(sf::IpAddress& addr) const
     {
         addr = cfg::ADDRESS_SERVER;
 
         if (addr == sf::IpAddress::None)
         {   std::cout << "ERROR: Address server "
-                       << addr
-                       << " not corrected\n";
-        }
+                      << addr
+                      << " not corrected\n";
+            return false;
+        }   return true ;
     }
 };
 
 inline void testclass_Client(const Account& acc)
-{   std::cout << __FUNCTION__ << '\n';
+{   std::system("mode 60, 30");
+    std::cout << __FUNCTION__ << '\n';
+
     win::set_window_name((std::string("Client") + acc.to_string()).c_str());
 
     Client client(acc);
@@ -149,5 +150,4 @@ inline void testclass_Client(const Account& acc)
 }
 
 #endif // CLIENT_H
-#endif // header guard
 

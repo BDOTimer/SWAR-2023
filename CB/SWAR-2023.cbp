@@ -11,9 +11,10 @@
 				<Option working_dir="bin/" />
 				<Option object_output="obj/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="msys_gcc-93" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="../SFML-2.5.1/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -43,13 +44,23 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="../sockets/_client.h" />
-		<Unit filename="../sockets/_config.h" />
-		<Unit filename="../sockets/_mysfml.h" />
-		<Unit filename="../sockets/_runner.h" />
-		<Unit filename="../sockets/_server.h" />
-		<Unit filename="../sockets/command.h" />
-		<Unit filename="../sockets/main.cpp" />
+		<Unit filename="../sources/common/mylib.h" />
+		<Unit filename="../sources/common/win.h" />
+		<Unit filename="../sources/games/chat/chat_client.h" />
+		<Unit filename="../sources/games/chat/chat_server.h" />
+		<Unit filename="../sources/games/chat/common.h" />
+		<Unit filename="../sources/games/swar/common.h" />
+		<Unit filename="../sources/games/swar/swar_client.h" />
+		<Unit filename="../sources/games/swar/swar_server.h" />
+		<Unit filename="../sources/sockets/_client.h" />
+		<Unit filename="../sources/sockets/_config.h" />
+		<Unit filename="../sources/sockets/_mess.h" />
+		<Unit filename="../sources/sockets/_mysfml.h" />
+		<Unit filename="../sources/sockets/_runner.h" />
+		<Unit filename="../sources/sockets/_server.h" />
+		<Unit filename="../sources/sockets/command.h" />
+		<Unit filename="../sources/sockets/debug.h" />
+		<Unit filename="../sources/sockets/main.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
