@@ -35,5 +35,5 @@ ____
     
 ____
 
-[![IMAGE ALT TEXT HERE](https://youtu.be/itWBCM06IkU)](https://youtu.be/itWBCM06IkU)
+[![https://youtu.be/itWBCM06IkU](https://youtu.be/itWBCM06IkU)](https://youtu.be/itWBCM06IkU)
 
