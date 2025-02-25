@@ -1,3 +1,3 @@
 main client Vasia password***
 
-paiuse
+pause
